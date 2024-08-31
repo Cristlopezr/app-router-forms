@@ -8,7 +8,15 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-export const RegistrationForm = () => {
+interface Props {
+    onDataAction: (data: z.infer<typeof schema>) => Promise<{
+        message: string;
+        user?: z.infer<typeof schema>;
+        issues?: string[];
+    }>;
+}
+
+export const RegistrationForm = ({ onDataAction }: Props) => {
     const form = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema),
         defaultValues: {
@@ -18,7 +26,7 @@ export const RegistrationForm = () => {
         },
     });
 
-    const onSubmit = (data: z.infer<typeof schema>) => {
+    const onSubmit = async (data: z.infer<typeof schema>) => {
         //JSON Format
         /*   fetch('/api/register', {
             method: 'POST',
@@ -31,8 +39,7 @@ export const RegistrationForm = () => {
             .then(data => console.log(data)); */
 
         //FormData Format
-
-        const formData = new FormData();
+        /* const formData = new FormData();
         formData.append('first', data.first);
         formData.append('last', data.last);
         formData.append('email', data.email);
@@ -41,7 +48,8 @@ export const RegistrationForm = () => {
             body: formData,
         })
             .then(res => res.json())
-            .then(data => console.log(data));
+            .then(data => console.log(data)); */
+        console.log(await onDataAction(data));
     };
 
     return (
