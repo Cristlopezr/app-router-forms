@@ -19,7 +19,7 @@ export default function Home() {
         }
     };
 
-    const onFormAction = async (formData: FormData) => {
+    const onFormAction = async (prevState: { message: string; user?: z.infer<typeof schema>; issues?: string[] }, formData: FormData) => {
         'use server';
 
         const data = Object.fromEntries(formData);

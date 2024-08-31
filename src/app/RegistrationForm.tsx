@@ -1,5 +1,5 @@
 'use client';
-
+import { useFormState } from 'react-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -7,6 +7,7 @@ import { schema } from './registrationSchema';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useRef } from 'react';
 
 interface Props {
     onDataAction: (data: z.infer<typeof schema>) => Promise<{
@@ -14,7 +15,10 @@ interface Props {
         user?: z.infer<typeof schema>;
         issues?: string[];
     }>;
-    onFormAction: (formData: FormData) => Promise<{
+    onFormAction: (
+        prevState: { message: string; user?: z.infer<typeof schema>; issues?: string[] },
+        formData: FormData
+    ) => Promise<{
         message: string;
         user?: z.infer<typeof schema>;
         issues?: string[];
@@ -22,6 +26,8 @@ interface Props {
 }
 
 export const RegistrationForm = ({ onDataAction, onFormAction }: Props) => {
+    const [state, formAction] = useFormState(onFormAction, { message: '' });
+
     const form = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema),
         defaultValues: {
@@ -30,6 +36,8 @@ export const RegistrationForm = ({ onDataAction, onFormAction }: Props) => {
             email: '',
         },
     });
+
+    const formRef = useRef<HTMLFormElement>(null);
 
     const onSubmit = async (data: z.infer<typeof schema>) => {
         //JSON Format
@@ -42,7 +50,6 @@ export const RegistrationForm = ({ onDataAction, onFormAction }: Props) => {
         })
             .then(res => res.json())
             .then(data => console.log(data)); */
-
         //FormData Format
         /* const formData = new FormData();
         formData.append('first', data.first);
@@ -54,22 +61,21 @@ export const RegistrationForm = ({ onDataAction, onFormAction }: Props) => {
         })
             .then(res => res.json())
             .then(data => console.log(data)); */
-
         //Server Action
         //console.log(await onDataAction(data));
-
         //Server Action FormData
-        const formData = new FormData();
+        /* const formData = new FormData();
         formData.append('first', data.first);
         formData.append('last', data.last);
         formData.append('email', data.email);
 
-        console.log(await onFormAction(formData));
+        console.log(await onFormAction(formData)); */
     };
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+            <div>{state?.message}</div>
+            <form ref={formRef} action={formAction} onSubmit={form.handleSubmit(() => formRef?.current?.submit())} className='space-y-8'>
                 <div className='flex items-center gap-2'>
                     <FormField
                         control={form.control}
