@@ -14,9 +14,14 @@ interface Props {
         user?: z.infer<typeof schema>;
         issues?: string[];
     }>;
+    onFormAction: (formData: FormData) => Promise<{
+        message: string;
+        user?: z.infer<typeof schema>;
+        issues?: string[];
+    }>;
 }
 
-export const RegistrationForm = ({ onDataAction }: Props) => {
+export const RegistrationForm = ({ onDataAction, onFormAction }: Props) => {
     const form = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema),
         defaultValues: {
@@ -49,7 +54,17 @@ export const RegistrationForm = ({ onDataAction }: Props) => {
         })
             .then(res => res.json())
             .then(data => console.log(data)); */
-        console.log(await onDataAction(data));
+
+        //Server Action
+        //console.log(await onDataAction(data));
+
+        //Server Action FormData
+        const formData = new FormData();
+        formData.append('first', data.first);
+        formData.append('last', data.last);
+        formData.append('email', data.email);
+
+        console.log(await onFormAction(formData));
     };
 
     return (

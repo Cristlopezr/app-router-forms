@@ -19,9 +19,27 @@ export default function Home() {
         }
     };
 
+    const onFormAction = async (formData: FormData) => {
+        'use server';
+
+        const data = Object.fromEntries(formData);
+
+        const parsed = schema.safeParse(data);
+
+        if (parsed.success) {
+            console.log('User Registered');
+            return { message: 'User Registered', user: parsed.data };
+        } else {
+            return {
+                message: 'Invalid data',
+                issues: parsed.error.issues.map(issue => issue.message),
+            };
+        }
+    };
+
     return (
         <div className='mx-auto max-w-xl'>
-            <RegistrationForm onDataAction={onDataAction} />
+            <RegistrationForm onDataAction={onDataAction} onFormAction={onFormAction} />
         </div>
     );
 }
