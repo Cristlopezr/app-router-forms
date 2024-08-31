@@ -34,6 +34,7 @@ export const RegistrationForm = ({ onDataAction, onFormAction }: Props) => {
             first: '',
             last: '',
             email: '',
+            zipcode: '',
         },
     });
 
@@ -106,6 +107,20 @@ export const RegistrationForm = ({ onDataAction, onFormAction }: Props) => {
                         )}
                     />
                 </div>
+                <FormField
+                    control={form.control}
+                    name='zipcode'
+                    render={({ field }) => (
+                        <FormItem className='flex-1'>
+                            <FormLabel>Zipcode</FormLabel>
+                            <FormControl>
+                                <Input placeholder='' {...field} />
+                            </FormControl>
+                            <FormDescription>Your zipcode.</FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
                 <FormField
                     control={form.control}
                     name='email'
